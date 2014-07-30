@@ -504,11 +504,12 @@ module.exports = ['babelfish', function (babelfish) {
  * Translate your application
  */
 module.exports = angular.module('ngBabelfish.solo', [])
+    .provider('theBabelfish', require('./providers/thebabelfish'))
     .factory('translator', require('./factory/translator'))
     .directive('i18nLoad', require('./directives/i18nLoad'))
     .directive('i18nBind', require('./directives/i18nBind'));
 
-},{"./directives/i18nBind":1,"./directives/i18nLoad":2,"./factory/translator":3}],6:[function(require,module,exports){
+},{"./directives/i18nBind":1,"./directives/i18nLoad":2,"./factory/translator":3,"./providers/thebabelfish":8}],6:[function(require,module,exports){
 require('./i18n-solo');
 
 /**
@@ -596,6 +597,48 @@ module.exports = function() {
      */
     this.$get = ['translator', function (translator) {
         translator.init(config);
+        return Object.create(translator);
+    }];
+};
+},{}],8:[function(require,module,exports){
+/**
+ * I18n Solo Service Provider
+ * Load your translations and update $rootScope
+ * It gives you access to your translation for your whole application without state
+ *
+ * It's better to use this service to translate, directives etc.
+ */
+module.exports = function() {
+
+    "use strict";
+
+    /**
+     * Default configuration for the module
+     * @type {Object}
+     */
+    var config = {
+        lang: 'en-EN',
+        url: '/i18n/translations.json',
+        namespace: 'i18n',
+        current: "",
+        log: true
+    };
+
+    /**
+     * Configure the service with a provider from the config of your module
+     * @param  {Object} params Configuration object
+     * @return {void}
+     */
+    this.init = function initTheBabelfishConfig(params) {
+        angular.extend(config, params);
+    };
+
+
+    /**
+     * Babelfish service
+     */
+    this.$get = ['translator', function (translator) {
+        translator.initSolo(config);
         return Object.create(translator);
     }];
 };
