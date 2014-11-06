@@ -14,11 +14,11 @@ provider('babelfish', function() {
       lang: 'en-EN',
       url: '/i18n/languages.json',
       eventName: '$stateChangeSuccess',
-      namespace: '',
+      namespace: 'i18n',
       lazy: false,
       urls: [],
       current: '',
-      log: true
+      verbose: true
   };
 
   /**
@@ -28,6 +28,16 @@ provider('babelfish', function() {
    */
   this.init = function initBabelfishConfig(params) {
     angular.extend(config, params);
+  };
+
+  /**
+   * Set the application in verbose mode or not
+   * Default mode: verbose is set to true
+   * @param  {Boolean}  verbose
+   * @return {void}
+   */
+  this.isVerbose = function isVerbose(verbose) {
+    config.verbose = verbose;
   };
 
   /**
@@ -55,15 +65,35 @@ provider('babelfish', function() {
    */
   this.$get = function() {
     return {
-      getConfig = function getConfig() {
+      /**
+       * Return the configuration for the provider
+       * @return {Object}
+       */
+      getConfig:function getConfig() {
         return config;
       },
 
-      getNameSpace = function getNameSpace() {
+      /**
+       * Return the default nameSpace for the app
+       * @return {String}
+       */
+      getNameSpace: function getNameSpace() {
         return config.namespace;
       },
 
-      getLanguages = function getLanguages() {
+      /**
+       * Get the eventName to listen when a new route is trigger
+       * @return {String}
+       */
+      getEventName: function getEventName() {
+        return config.eventName;
+      }
+
+      /**
+       * Get each languages available in the application
+       * @return {Array}
+       */
+      getLanguages: function getLanguages() {
         if(config.lazy) {
           return config.urls.map(function (item) {
             return item.lang;
@@ -73,10 +103,26 @@ provider('babelfish', function() {
         return [config.lang];
       },
 
+      /**
+       * Return the default State of the application
+       * @return {String}
+       */
       getState: function getState() {
         return config.state;
       },
 
+      /**
+       * Check if we are in lazy mode or not
+       * @return {Boolean}
+       */
+      isLazy: function isLazy() {
+        return config.lazy;
+      },
+
+      /**
+       * Is the application is running with -vvv or not
+       * @return {Boolean}
+       */
       isVerbose: function isVerbose() {
         return config.verbose;
       }
