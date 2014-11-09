@@ -14,7 +14,7 @@ var fs       = require('fs'),
 gulp.task('default', function() {
 
   /**
-   * List each directory iniside i18n directory
+   * List each directory inside a directory
    * From {@link https://github.com/gulpjs/gulp/blob/master/docs/recipes/running-task-steps-per-folder.md}
    * @param  {String} dir Directory
    * @return {Array}
@@ -67,10 +67,5 @@ gulp.task('default', function() {
           .pipe(sourcemaps.write())
           .pipe(uglify())
           .pipe(concat('bundle.min.js'))
-          .pipe(gulp.dest('./dev'))
-
-  // gulp.src('./src/**/*.js')
-  //   .pipe(tap(function (file) {
-  //     console.log(file.path.split(path.sep));
-  //   }));
+          .pipe(gulp.dest('./dev'));
 });
