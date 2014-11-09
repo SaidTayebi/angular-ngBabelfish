@@ -1,1 +1,1 @@
-angular.module('ngBabelfish.directives',['ngBabelfish.ring'])
+angular.module('ngBabelfish.directives',['ngBabelfish.ring']);

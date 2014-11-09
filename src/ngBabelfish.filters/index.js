@@ -1,1 +1,1 @@
-angular.module('ngBabelfish.filters',['ngBabelfish.ring'])
+angular.module('ngBabelfish.filters',['ngBabelfish.ring']);

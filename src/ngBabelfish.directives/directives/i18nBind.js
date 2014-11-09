@@ -1,14 +1,15 @@
-/**
- * i18nBind directive
- * Load a translation for a var
- *
- * If you do not provide any lang (i18n-bind-lang), we will compile the directive, else it will update the textContent.
- *
- * We do not update the translationKey's value because it will change the reference key from i18n-bind. Yup that's weird.
- *
- * Isolate scope FTW
- */
 directive('i18nBind', function (translator) {
+
+  /**
+   * i18nBind directive
+   * Load a translation for a var
+   *
+   * If you do not provide any lang (i18n-bind-lang), we will compile the directive, else it will update the textContent.
+   *
+   * We do not update the translationKey's value because it will change the reference key from i18n-bind. Yup that's weird.
+   *
+   * Isolate scope FTW
+   */
 
   return {
     restrict: 'A',
