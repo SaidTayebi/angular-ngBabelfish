@@ -3,10 +3,10 @@
  * Translate your application
  */
 angular.module('ngBabelfish', ['ngBabelfish.core','ngBabelfish.directives','ngBabelfish.filters'])
-  .run(function (babelfish, $rootScope) {
+  .run(function ($rootScope, translator) {
     // Update the translation when you change a page
-    $rootScope.$on(babelfish.getEvent(), function (e, toState) {
-        babelfish.updateState(toState.name);
+    $rootScope.$on(babelfish.getEventName(), function (e, toState) {
+        translator.updateState(toState.name);
     });
-    babelfish.load();
+    translator.start();
   });

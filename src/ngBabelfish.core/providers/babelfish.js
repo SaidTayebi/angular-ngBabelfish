@@ -70,8 +70,12 @@ provider('babelfish', function() {
        * Return the configuration for the provider
        * @return {Object}
        */
-      getConfig:function getConfig() {
+      getConfig: function getConfig() {
         return config;
+      },
+
+      getDefaultLanguage: function getDefaultLanguage() {
+        return config.lang;
       },
 
       /**

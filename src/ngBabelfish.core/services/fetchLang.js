@@ -1,11 +1,10 @@
 service('languageLoader', function ($http, babelfish, translator, marvinMemory) {
 
   var service = this;
-  var currentLang;
 
   this.fetch = function fetch(lang, url) {
 
-    currentLang = lang;
+    marvinMemory.get('lang').current = lang;
 
     return $http.get(url)
       .error(deferred.reject)
@@ -16,8 +15,10 @@ service('languageLoader', function ($http, babelfish, translator, marvinMemory) 
 
   this.load = function load(data) {
     var translations = marvinMemory.get('i18n');
-    translations[currentLang] = data;
+    translations[marvinMemory.get('lang').current] = data;
+
     marvinMemory.set('i18n',translations);
+    marvinMemory.set('langAvailable',Object.keys(translations));
   };
 
 });
