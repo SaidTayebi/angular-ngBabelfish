@@ -153,6 +153,13 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
   function load(url, stateName) {
 
+    url = url || marvin.getConfig().url;
+    stateName = stateName || marvin.getConfig().state;
+
+    if(config.isLazy()) {
+      url = marvin.getLazyConfig(marvinI18nMemory.current || marvin.getConfig().lang);
+    }
+
     init(url, stateName);
 
     return $http.get(url)
