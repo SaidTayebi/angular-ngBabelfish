@@ -9,6 +9,7 @@
   "eqnull": true,
   "browser": true,
   "strict": true,
+  "indent": 2,
   "trailing": true,
   "smarttabs": true,
   "maxparams": 3,
