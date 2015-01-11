@@ -89,6 +89,8 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
         }
       }
 
+      marvinI18nMemory.stateLoaded = true;
+
       if(marvin.isLazy()) {
         angular.extend(common, marvinI18nMemory.data[lang]._common);
         currentPageTranslation = angular.extend(common, marvinI18nMemory.data[page]);
@@ -210,6 +212,20 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
     }
   }
 
+  /**
+   * Load some data from a cache
+   * @param {Object} data
+   * return {void}
+   */
+  function setStaticData(data) {
+    if(!data[marvinI18nMemory.current]) {
+      marvinI18nMemory.data[marvinI18nMemory.current] = data;
+    }else {
+      marvinI18nMemory.data = data;
+    }
+    setTranslation();
+  }
+
   // Listen when you change the language in your application
   $rootScope.$on('ngBabelfish.translation:changed', function() {
     if(!marvin.isSolo()) {
@@ -225,6 +241,7 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
     initStaticData: initStaticData,
     updateState: setTranslation,
     setSoloTranslation: setSoloTranslation,
+    setStaticData: setStaticData,
     load: load,
     updateLang: loadLanguage
   };
