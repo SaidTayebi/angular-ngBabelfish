@@ -170,22 +170,63 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
       })
       .then(function() {
-
-          if(!marvin.isSolo()) {
-            setTranslation(marvinI18nMemory.currentState);
-          }else{
-            setSoloTranslation();
-          }
+        if(!marvin.isSolo()) {
+          setTranslation(marvinI18nMemory.currentState);
+        }else{
+          setSoloTranslation();
+        }
       });
   }
+
+  /**
+   * Load a translation to the $scope for a language
+   * - doc BCP 47 {@link http://tools.ietf.org/html/bcp47}
+   * - doc Value of HTML5 lang attr {@link http://webmasters.stackexchange.com/questions/28307/value-of-the-html5-lang-attribute}
+   * @trigger {Event} i18n:babelfish:changed {previous:XXX,value:XXX2}
+   * @param {String} lang Your language cf BCP 47
+   */
+  function loadLanguage(lang) {
+
+    var defaultLang = marvin.getDefaultLang();
+
+    // Find the current lang if it doesn't exist. Store the previous one too
+    if(!lang) {
+      marvinI18nMemory.previousLang = lang = defaultLang;
+    }else {
+      document.documentElement.lang = lang.split('-')[0];
+      marvinI18nMemory.previousLang = defaultLang;
+    }
+
+    marvinI18nMemory.current = lang;
+
+    $rootScope.$emit('ngBabelfish.translation:changed', {
+      previous: defaultLang,
+      value: lang
+    });
+
+    // Load the new language if we do not already have it
+    if(marvin.isLazy() && !marvinI18nMemory.data[lang]) {
+      service.load(marvin.getLazyConfig(lang).url, marvinI18nMemory.currentState);
+    }
+  }
+
+  // Listen when you change the language in your application
+  $rootScope.$on('ngBabelfish.translation:changed', function() {
+    if(!marvin.isSolo()) {
+      setTranslation(marvinI18nMemory.currentState);
+    }else{
+      setSoloTranslation();
+    }
+  });
 
   return {
     init: init,
     initLazy: initLazy,
     initStaticData: initStaticData,
-    setTranslation: setTranslation,
+    updateState: setTranslation,
     setSoloTranslation: setSoloTranslation,
-    load: load
+    load: load,
+    updateLang: loadLanguage
   };
 
 });

@@ -133,7 +133,7 @@ provider('marvin', function() {
 
       isSolo: function isSolo() {
         console.log('[@todo] Need to implement solo mode');
-        return true;
+        return false;
       }
     };
   };
