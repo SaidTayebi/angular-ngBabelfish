@@ -2,6 +2,12 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
   'use strict';
 
+  /**
+   * Lazy load translations for a lang
+   * @param  {String} url
+   * @param  {String} stateName
+   * @return {void}
+   */
   function initLazy(url, stateName) {
     var langConfig = marvin.getLazyConfigByUrl(url);
 
@@ -15,6 +21,13 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
   }
 
+  /**
+   * Load a translation for a current state from static data
+   * For each lang and state you can use the key data in order to load these data
+   * @param  {String} url
+   * @param  {String} stateName
+   * @return {void}
+   */
   function initStaticData(url, stateName) {
     marvinI18nMemory.current = marvin.getDefaultLang();
     marvinI18nMemory.currentState = stateName;
@@ -151,6 +164,12 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
     }
   }
 
+  /**
+   * Load a translation for a state
+   * @param  {String} url
+   * @param  {String} stateName
+   * @return {$q.Promise}
+   */
   function load(url, stateName) {
 
     url = url || marvin.getConfig().url;

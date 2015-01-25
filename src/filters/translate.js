@@ -1,14 +1,12 @@
-/**
- * transalte filter
- * Translate a string to another language
- * {{ name | translate:'fr-FR':"name"}}
- */
-module.exports = ['babelfish', function (babelfish) {
+filter('babelfish', function (babelfish) {
+  /**
+   * transalte filter
+   * Translate a string to another language
+   * {{ name | translate:'fr-FR':"name"}}
+   */
+  'use strict';
 
-    "use strict";
-
-    return function (input, lang, key) {
-        return babelfish.get(lang)[key];
-    }
-
-}];
+  return function (input, lang, key) {
+    return babelfish.get(lang)[key];
+  }
+});

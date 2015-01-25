@@ -1,5 +1,5 @@
 angular.module('ngBabelfish', [])
-  .run(function ($state, $rootScope, babelfishLangLoader, marvin) {
+  .run(function ($rootScope, babelfishLangLoader, marvin) {
 
     // Update the translation when you change a page
     $rootScope.$on(marvin.getRouteEvent(), function (e, toState) {
