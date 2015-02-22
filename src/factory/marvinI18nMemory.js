@@ -1,11 +1,17 @@
 factory('marvinI18nMemory', function() {
-  return {
+  var memory = {
     current: '',
     data: null,
     available: [],
     currentState: '',
     active: false,
-    previousLang: config.lang,
+    previousLang: 'en-EN',
     stateLoaded: false
+  };
+
+  return {
+    get: function() {
+      return memory;
+    }
   };
 });

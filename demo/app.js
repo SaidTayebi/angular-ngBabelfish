@@ -4,7 +4,7 @@
 * Description
 */
 angular.module('ngBabelfishDemo', ['ui.router','ngBabelfish'])
-  .config(function ($stateProvider, $urlRouterProvider, babelfishProvider){
+  .config(function ($stateProvider, $urlRouterProvider, marvinProvider){
 
     $stateProvider
       .state('home', {
@@ -23,8 +23,7 @@ angular.module('ngBabelfishDemo', ['ui.router','ngBabelfish'])
 
       $urlRouterProvider.otherwise('/');
 
-      babelfishProvider.init({
-        namespace: 'i18n',
+      marvinProvider.init({
         url: 'i18n/i18n.json'
       })
   })

@@ -2,9 +2,9 @@
  * i18nLoad directive
  * Load a translation from a click on a button with the attr i18n-load
  */
-module.exports = ['translator', function (translator) {
+directive('i18nLoad', function() {
 
-    "use strict";
+    // "use strict";
 
     return {
         restrict: "A",
@@ -17,4 +17,4 @@ module.exports = ['translator', function (translator) {
         }
     };
 
-}];
+});

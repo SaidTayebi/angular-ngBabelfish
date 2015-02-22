@@ -11,6 +11,32 @@ var fs       = require('fs'),
   ngAnnotate  = require('gulp-ng-annotate');
 
 
+gulp.task('module', function() {
+
+  gulp
+    .src(['./src/index.js', './src/**/*.js'])
+    .pipe(plumber())
+    .pipe(ngAnnotate({
+      add: true,
+      remove: true,
+      single_quotes: true
+    }))
+    // .pipe(beautify({
+    //   indentSize: 2,
+    //   keepArrayIndentation: true
+    // }))
+    .pipe(sourcemaps.init())
+    .pipe(concat('bundle.js', {
+      newLine: "\nangular.module('ngBabelfish')\n\t."
+    }))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./dist'))
+    .pipe(uglify())
+    .pipe(concat('bundle.min.js'))
+    .pipe(gulp.dest('./dist'));
+
+});
+
 gulp.task('modules', function() {
 
   /**
@@ -71,6 +97,6 @@ gulp.task('modules', function() {
       .pipe(gulp.dest('./dev'));
 });
 
-gulp.task('default', function() {
-  gulp.watch('./src/**/*.js',['modules']);
+gulp.task('default', ['module'], function() {
+  gulp.watch('./src/**/*.js',['module']);
 });

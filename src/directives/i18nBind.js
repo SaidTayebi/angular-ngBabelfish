@@ -8,9 +8,9 @@
  *
  * Isolate scope FTW
  */
-module.exports = ['translator', function (translator) {
+directive('i18nBind', function () {
 
-    'use strict';
+    // 'use strict';
 
 
     return {
@@ -23,26 +23,26 @@ module.exports = ['translator', function (translator) {
 
         link: function(scope,el,attr) {
 
-            var key = '',
-                namespace = translator.getNamespace();
+            // var key = '',
+            //     namespace = translator.getNamespace();
 
-            key = (namespace) ? attr.i18nBind.replace(namespace + '.', '') : attr.i18nBind;
+            // key = (namespace) ? attr.i18nBind.replace(namespace + '.', '') : attr.i18nBind;
 
-            // Because it breaks if you update translationKey...
-            if(attr.i18nBindLang) {
+            // // Because it breaks if you update translationKey...
+            // if(attr.i18nBindLang) {
 
-                if(!translator.isLangLoaded(attr.i18nBindLang)) {
-                    translator.loadTranslation(attr.i18nBindLang)
-                        .then(function() {
-                            el.text(translator.get(attr.i18nBindLang || translator.current())[key]);
-                        });
-                }else{
-                    el.text(translator.get(attr.i18nBindLang || translator.current())[key]);
-                }
+            //     if(!translator.isLangLoaded(attr.i18nBindLang)) {
+            //         translator.loadTranslation(attr.i18nBindLang)
+            //             .then(function() {
+            //                 el.text(translator.get(attr.i18nBindLang || translator.current())[key]);
+            //             });
+            //     }else{
+            //         el.text(translator.get(attr.i18nBindLang || translator.current())[key]);
+            //     }
 
-            }
+            // }
 
         }
     };
 
-}];
+});

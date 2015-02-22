@@ -2,6 +2,8 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
   'use strict';
 
+  var model = marvinI18nMemory.get();
+
   /**
    * Lazy load translations for a lang
    * @param  {String} url
@@ -11,12 +13,12 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
   function initLazy(url, stateName) {
     var langConfig = marvin.getLazyConfigByUrl(url);
 
-    marvinI18nMemory.available = marvin.getLazyLangAvailable();
-    marvinI18nMemory.current = langConfig.lang;
-    marvinI18nMemory.currentState = stateName;
+    model.available = marvin.getLazyLangAvailable();
+    model.current = langConfig.lang;
+    model.currentState = stateName;
 
     if(lazyConfig.data) {
-      marvinI18nMemory.data[stateName] = lazyConfig.data;
+      model.data[stateName] = lazyConfig.data;
     }
 
   }
@@ -29,10 +31,10 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
    * @return {void}
    */
   function initStaticData(url, stateName) {
-    marvinI18nMemory.current = marvin.getDefaultLang();
-    marvinI18nMemory.currentState = stateName;
-    marvinI18nMemory.data = marvin.data;
-    marvinI18nMemory.available = Object.keys(marvin.data);
+    model.current = marvin.getDefaultLang();
+    model.currentState = stateName;
+    model.data = marvin.data;
+    model.available = Object.keys(marvin.data);
   }
 
   /**
@@ -42,14 +44,15 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
    */
   function init(url, stateName) {
 
-    if(marvinI18nMemory.data[marvinI18nMemory.current]) {
+    debugger;
+    if(!model.data || model.data[model.current]) {
       return;
     }
 
     marvin.isLazy() && initLazy(url, stateName);
     marvin.data && initStaticData(url, stateName);
 
-    setTranslation(marvinI18nMemory.currentState);
+    setTranslation(model.currentState);
   }
 
   /**
@@ -61,38 +64,39 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
    */
   function setTranslation(page) {
 
-    page = page || marvinI18nMemory.currentState  || marvin.state;
+    page = page || model.currentState  || marvin.state;
 
-    var lang = marvinI18nMemory.current,
+    var lang = model.current,
         currentPageTranslation = {},
         common = {};
 
     // Prevent too many digest
-    if(marvinI18nMemory.currentState === page && marvinI18nMemory.stateLoaded && marvinI18nMemory.current === marvinI18nMemory.previousLang) {
+    if(model.currentState === page && model.stateLoaded && model.current === model.previousLang) {
       return;
     }
 
-    marvinI18nMemory.active = true;
+    model.active = true;
 
-    if(marvinI18nMemory.data[lang]) {
+    if(model.data[lang]) {
 
       /**
        * Prevent the error
        *     > TypeError: Cannot read property '$$hashKey' of undefined
        * cf {@link https://github.com/dhoko/ngBabelfish/issues/5}
        */
-      if(!marvinI18nMemory.data[lang][page]) {
-        marvinI18nMemory.data[lang][page] = {};
+      if(!model.data[lang][page]) {
+        model.data[lang][page] = {};
 
         if(marvin.isVerbose()) {
           console.warn('[babelfishLangLoader@setTranslation] No translation available for the page %s for the lang %s',page, lang);
         }
       }
 
-      angular.extend(common, marvinI18nMemory.data[lang]._common);
-      currentPageTranslation = angular.extend(common, marvinI18nMemory.data[lang][page]);
+      angular.extend(common, model.data[lang]._common);
+      currentPageTranslation = angular.extend(common, model.data[lang][page]);
 
       if(marvin.getNamespace()) {
+        debugger
         $rootScope[marvin.getNamespace()] = currentPageTranslation;
       }else {
         angular.extend($rootScope, currentPageTranslation);
@@ -102,11 +106,11 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
         }
       }
 
-      marvinI18nMemory.stateLoaded = true;
+      model.stateLoaded = true;
 
       if(marvin.isLazy()) {
-        angular.extend(common, marvinI18nMemory.data[lang]._common);
-        currentPageTranslation = angular.extend(common, marvinI18nMemory.data[page]);
+        angular.extend(common, model.data[lang]._common);
+        currentPageTranslation = angular.extend(common, model.data[page]);
 
         if(config.namespace) {
           $rootScope[config.namespace] = currentPageTranslation;
@@ -131,24 +135,25 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
    */
   function setSoloTranslation() {
 
-    var lang = marvinI18nMemory.current,
+    var lang = model.current,
         currentPageTranslation = {},
         common = {};
 
     // Prevent too many digest
-    if(lang === marvinI18nMemory.previousLang) {
+    if(lang === model.previousLang) {
       return;
     }
 
-    marvinI18nMemory.active = true;
+    model.active = true;
 
 
-    if(marvinI18nMemory.data[lang]) {
+    if(model.data[lang]) {
 
-      angular.extend(common, marvinI18nMemory.data._common || {});
-      currentPageTranslation = angular.extend(common, marvinI18nMemory.data[lang]);
+      angular.extend(common, model.data._common || {});
+      currentPageTranslation = angular.extend(common, model.data[lang]);
 
       if(marvin.getNamespace()) {
+        debugger
         $rootScope[marvin.getNamespace()] = currentPageTranslation;
       }else {
         angular.extend($rootScope, currentPageTranslation);
@@ -174,9 +179,8 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
     url = url || marvin.getConfig().url;
     stateName = stateName || marvin.getConfig().state;
-
-    if(config.isLazy()) {
-      url = marvin.getLazyConfig(marvinI18nMemory.current || marvin.getConfig().lang);
+    if(marvin.isLazy()) {
+      url = marvin.getLazyConfig(model.current || marvin.getConfig().lang);
     }
 
     init(url, stateName);
@@ -188,18 +192,16 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
         }
       })
       .success(function (data) {
-
         if(marvin.isLazy()) {
-          marvinI18nMemory.data[marvinI18nMemory.current] = data;
+          model.data[model.current] = data;
         }else {
-          marvinI18nMemory.data = data;
-          marvinI18nMemory.available = Object.keys(i18n.data);
+          model.data = data;
+          model.available = Object.keys(data);
         }
-
       })
       .then(function() {
         if(!marvin.isSolo()) {
-          setTranslation(marvinI18nMemory.currentState);
+          setTranslation(model.currentState);
         }else{
           setSoloTranslation();
         }
@@ -217,15 +219,16 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
 
     var defaultLang = marvin.getDefaultLang();
 
+
     // Find the current lang if it doesn't exist. Store the previous one too
     if(!lang) {
-      marvinI18nMemory.previousLang = lang = defaultLang;
+      model.previousLang = lang = defaultLang;
     }else {
       document.documentElement.lang = lang.split('-')[0];
-      marvinI18nMemory.previousLang = defaultLang;
+      model.previousLang = defaultLang;
     }
 
-    marvinI18nMemory.current = lang;
+    model.current = lang;
 
     $rootScope.$emit('ngBabelfish.translation:changed', {
       previous: defaultLang,
@@ -233,8 +236,8 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
     });
 
     // Load the new language if we do not already have it
-    if(marvin.isLazy() && !marvinI18nMemory.data[lang]) {
-      service.load(marvin.getLazyConfig(lang).url, marvinI18nMemory.currentState);
+    if(marvin.isLazy() && !model.data[lang]) {
+      service.load(marvin.getLazyConfig(lang).url, model.currentState);
     }
   }
 
@@ -244,10 +247,10 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
    * return {void}
    */
   function setStaticData(data) {
-    if(!data[marvinI18nMemory.current]) {
-      marvinI18nMemory.data[marvinI18nMemory.current] = data;
+    if(!data[model.current]) {
+      model.data[model.current] = data;
     }else {
-      marvinI18nMemory.data = data;
+      model.data = data;
     }
     setTranslation();
   }
@@ -255,7 +258,7 @@ service('babelfishLangLoader', function ($rootScope, $http, marvin, marvinI18nMe
   // Listen when you change the language in your application
   $rootScope.$on('ngBabelfish.translation:changed', function() {
     if(!marvin.isSolo()) {
-      setTranslation(marvinI18nMemory.currentState);
+      setTranslation(model.currentState);
     }else{
       setSoloTranslation();
     }
